@@ -6,7 +6,8 @@
  * Sono presenti solo 2 metodi Setter poichè i parametri devono NECESSARIAMENTE lavorare in coppia.
  * Sono presenti 4 metodi Getter poichè un metodo deve ritornare un solo valore e risulta una comodità.
  * Le relazioni utilizzate sono incluse nel codice.
- * Gli angoli multipli di 360 hanno valore 0
+ * Gli angoli multipli di ±360 hanno valore 0
+ * La classe lavora con angoli compresi tra -359 e +359
  *
  */
 package complexnumber;
@@ -16,39 +17,52 @@ public class ComplexNumber {
 	private double im;
 	static private double initRe;
 	static private double initIm;
+	
 
 	/**
 	 *
 	 * @param re
 	 * @param im
-	 * Inizializza i campi di classe initRe ed initIm
+	 * Inizializza i campi di classe initRe,initIm oltre che impostare come formato iniziale di rappresentazione quello rettangolare
 	 */
 	static public void setInitRectangular(double re, double im) {
+		
 		initRe = re;
 		initIm = im;
+		formatoIniziale = StringFormat.RETTANGOLARI; //setto il formato delle successive visualizzazioni a RETTANGOLARE
+		
 	}
 
 	/**
 	 *
 	 * @param modulus
 	 * @param argument
-	 * Inizializza i campi di classe initRe ed initIm convertendo le coordinate polari
+	 * Inizializza i campi di classe initRe initIm oltre che impostare come formato iniziale di rappresentazione quello polare
 	 * 
 	 */
 	static public void setInitPolar(double modulus, double argument) {
-		if (modulus < 0) {
-			throw new IllegalArgumentException(
-					"Il mudulo non può essere negativo");
-		}
-		initRe = modulus * Math.cos(argument);
-		initIm = modulus * Math.sin(argument);
+		
+		argument -= (((int) argument / 360) * 360); /* riduce ogni angolo ad
+													   angoli compresi tra -359° e
+													   +359° gradi*/
+		if (modulus >= 0) {
+				initRe = modulus * (Math.cos(argument * Math.PI / 180));
+				initIm = modulus * (Math.sin(argument * Math.PI / 180));
+		} else
+		
+		formatoIniziale = StringFormat.POLARI; //setto il formato delle successive visualizzazioni a POLARE
 	}
+	
 	/**
-	 * Costruttore che inizializza l'oggetto partendo dai campi di classe initRe ed initIm
+	 * Costruttore che inizializza i campi dell'oggetto a initRe, initIm e formatoIniziale
+	 * 
 	 */
+	
 	public ComplexNumber(){
 		this.re=ComplexNumber.initRe;
 		this.im=ComplexNumber.initIm;
+		this.formato=ComplexNumber.formatoIniziale;  //analogamente a quanto fatto con im e re inizializzo il formato al valore di ComplexNumber.formatoIniziale
+		
 		//chiedere perchè non uso solo le variabili
 	}
 	
@@ -74,31 +88,86 @@ public class ComplexNumber {
 	 */
 	/*
 	public String formatComplexNumberPolar() {
+
 		String r = "Modulo:" + this.getModulus() + " Argomento:"
 				+ this.getArgument();
 		return r;
 	}*/
-
+	
+	public enum StringFormat{
+		
+		//definisco i due possibili valori che una variabile di tipo StringFormat può assumere
+		RETTANGOLARI,
+		POLARI
+		
+	}
+	
+	static private StringFormat formatoIniziale;  
+	private StringFormat formato; 
+    /**
+     * @return la rappresentazione a stringa dell'istanza, a seconda del formato richiesto
+     */
+	@Override
 	public String toString(){
 		
-		return this.re+"+("+this.im+")i";
+		//specializzazione del metodo toString di base,ora quando si invocherà toString() in un oggetto ComplexNumber il corpo del metodo sarà il seguente
+		
+		return toString(this.formato); //richiama il metodo toString passando il membro di classe formato
+		//this.formato COME FA A FUNZIONARE? NON SERVE UN METODO getFormato?
+	}
+	/**
+	 * 
+	 * @param formato
+	 * @return istanza della Classe String contenente una stringa formattata in base al formato ricevuto
+	 */
+	public String toString(StringFormat formato){
+		/*
+		 * Metodo differente da toString() siccome differisce per numero di parametri
+		 */
+		 
+		 String r = new String();
+		 
+		 switch(formato) {
+		 
+			 case RETTANGOLARI:
+				 r = this.re + "+(" + this.im + ")i";
+				 break;
+			 case POLARI:
+				 r = "Modulo: " +this.getModulus() + " ; Theta: " + this.getArgument();
+				 break;
+			 default:
+				 throw new UnsupportedOperationException();
+				 
+		 }
+		 return r;
+		
 	}
 	
 	/**
-	 * Permette di accedere al campo re dell'oggetto in lettura RITORNA
-	 * COMPONENTE REALE QUINDI COORDINATA RETTANGOLARE
 	 * 
-	 * @return valore del campo re dell'oggetto.
+	 * @param formato
+	 * setta il formato ricevuto in input come formato dell'istanza
+	 */
+	
+	public void setStringFormat(StringFormat formato) {
+		this.formato = formato;
+		}
+	
+	/**
+	 * Permette di accedere al campo re dell'oggetto in lettura 
+	 * RITORNA COMPONENTE REALE QUINDI COORDINATA RETTANGOLARE
+	 * 
+	 * @return valore del campo re dell'oggetto invocante
 	 */
 	public double getRe() {
 		return re;
 	}
 
 	/**
-	 * Permette di accedere al campo im dell'oggetto in lettura RITORNA
-	 * COMPONENTE IMMAGINARIA QUINDI COORDINATA RETTANGOLARE
+	 * Permette di accedere al campo im dell'oggetto in lettura 
+	 * RITORNA COMPONENTE IMMAGINARIA QUINDI COORDINATA RETTANGOLARE
 	 * 
-	 * @return Ritorna il valore del campo im dell'oggetto
+	 * @return valore del campo im dell'oggetto invocante
 	 */
 	public double getIm() {
 		return im;
@@ -106,23 +175,21 @@ public class ComplexNumber {
 
 	/**
 	 *
-	 * Non riceve nessun parametro.
 	 * 
-	 * @return valore di tipo Double = al modulo delle componenti REALE ed
-	 *         IMMAGINARIA dell'oggetto.
+	 * @return modulo del numero complesso
 	 */
 	public double getModulus() {
 		return Math.sqrt((this.re * this.re) + (this.im * this.im));
 	}
 
 	/**
-	 *
-	 * Non riceve nessun parametro Per Modulo=0 e Argomento=0 il metodo ritorna
-	 * 0. Il valore di ritorno è in GRADI SESSAGESIMALI.
+	 * Per Modulo=0 e Argomento=0 il metodo ritorna 0. 
+	 * Il valore di ritorno è in GRADI SESSAGESIMALI.
 	 * 
-	 * @return var ritorna di tipo double = all'argomento.
+	 * @return argomento del numero complesso
 	 */
 	public double getArgument() {
+		
 		double argomento = 0;
 		if (re == 0) {
 			if (im == 0)
@@ -145,12 +212,10 @@ public class ComplexNumber {
 	/**
 	 *
 	 * @param re
-	 *            di tipo Double
 	 * @param im
-	 *            di tipo Double
 	 *
 	 *
-	 *            Metodo utilizzato per per accedere in scrittura ai campi re ed
+	 *            Metodo utilizzato per accedere in scrittura ai campi re ed
 	 *            im dell'oggetto in caso di coordinate RETTANGOLARI.
 	 */
 	public void setRectangular(double re, double im) {
@@ -161,17 +226,15 @@ public class ComplexNumber {
 	/**
 	 *
 	 * @param modulus
-	 *            di tipo Double
 	 * @param argument
-	 *            di tipo Double
 	 *
 	 *            Metodo utilizzato per memorizzare le coordinate POLARI,
 	 *            (permette di accedere in scrittura ai campi re ed im nel caso
 	 *            in cui si ricevono in input coordinate polari)
-	 *            Il metodo non accetta moduli negativi.
 	 *
 	 */
 	public void setPolar(double modulus, double argument) {
+		
 		argument -= (((int) argument / 360) * 360); // riduce ogni angolo ad
 													// angoli compresi tra -359° e
 													// +359° gradi
@@ -185,11 +248,9 @@ public class ComplexNumber {
 	}
 
 	/**
-	 *
-	 * @param operand
-	 *            di tipo ComplexNumber (addendo) svolge le operazioni con
-	 *            coordinate rettangolari
-	 * @return istanza somma.
+	 * somma il valore dell'oggetto invocante a quello dell'oggetto ottenuto come parametro
+	 * @param  operand
+	 * @return nuova istanza contenente il risultato della somma
 	 */
 	public ComplexNumber add(ComplexNumber operand) {
 		/*
@@ -204,11 +265,9 @@ public class ComplexNumber {
 	}
 
 	/**
-	 *
+	 * sottrae il valore dell'oggetto invocante a quello dell'oggetto ottenuto come parametro
 	 * @param operand
-	 *            di tipo ComplexNumber (sottraendo) svolge le operazione con
-	 *            coordinate rettangoli
-	 * @return istanza differenza
+	 * @return istanza contenente il risultato della differenza
 	 */
 	public ComplexNumber sub(ComplexNumber operand) {
 		/*
@@ -223,9 +282,9 @@ public class ComplexNumber {
 	}
 
 	/**
-	 *
+	 * moltiplica il valore dell'oggetto invocante a quello dell'oggetto ottenuto come parametro
 	 * @param operand
-	 * @return nuova istanza contenente il prodotto
+	 * @return nuova istanza contenente il risultato della moltiplicazione
 	 */
 	public ComplexNumber multiply(ComplexNumber operand) {
 		/*
@@ -240,7 +299,7 @@ public class ComplexNumber {
 	}
 
 	/**
-	 *
+	 * divide il valore dell'oggetto invocante per quello dell'oggetto ottenuto come parametro
 	 * @param operand
 	 * @return nuova istanza contenente il risultato della divisione
 	 */
@@ -256,13 +315,12 @@ public class ComplexNumber {
 			double argomento = this.getArgument() - operand.getArgument();
 			risultato.setPolar(modulo, argomento);
 		} else
-			throw new IllegalArgumentException("Il modulo deve essere != da 0");
+			throw new IllegalArgumentException("Il modulo del divisore deve essere diverso da 0");
 		return risultato;
 	}
 
 	/**
-	 * Non riceve in input alcun parametro restituisce il coniugato del
-	 * numeroComplesso invocante
+     * restituisce il coniugato del numeroComplesso invocante
 	 * 
 	 * @return nuova istanza contenente il coniugato
 	 */
@@ -281,10 +339,10 @@ public class ComplexNumber {
 	}
 
 	/**
-	 *
+	 * somma i valori dei 2 oggetti ottenuti come parametri
 	 * @param operand1
 	 * @param operand2
-	 * @return nuova istanza somma contenente la somma dei due numeri complessi ricevuti in input
+	 * @return nuova istanza somma contenente il risultato della somma
 	 */
 	static public ComplexNumber add(ComplexNumber operand1,ComplexNumber operand2) {
 		/*
@@ -292,17 +350,15 @@ public class ComplexNumber {
 		 * con coordinate rettangolari
 		 */
 		ComplexNumber somma = new ComplexNumber();
-		somma.setRectangular(operand1.getRe() + operand2.getRe(),
-				operand1.getIm() + operand1.getIm());
+		somma.setRectangular(operand1.getRe() + operand2.getRe(),operand1.getIm() + operand1.getIm());
 		return somma;
 	}
 
 	/**
-	 *
+	 * sottrae il valore del secondo oggetto ricevuto come parametro al primo.
 	 * @param operand1
 	 * @param operand2
-	 * @return nuova istanza differenza contenente la differenza fra il primo numero complesso e il secondo ricevuti
-	 * in input
+	 * @return nuova istanza differenza contenente il risultato della sottrazione
 	 */
 	static public ComplexNumber sub(ComplexNumber operand1,ComplexNumber operand2) {
 		/*
@@ -316,7 +372,7 @@ public class ComplexNumber {
 	}
 
 	/**
-	 *
+	 * moltiplica i valori dei 2 oggetti ottenuti come parametri
 	 * @param operand1
 	 * @param operand2
 	 * @return nuova istanza prodotto contenente il prodotto dei 2 numeri complessi in input
@@ -327,17 +383,15 @@ public class ComplexNumber {
 		 * con coordinate polari
 		 */
 		ComplexNumber prodotto = new ComplexNumber();
-		prodotto.setPolar(operand1.getModulus() * operand2.getModulus(),
-				operand1.getArgument() + operand2.getArgument());
+		prodotto.setPolar(operand1.getModulus() * operand2.getModulus(),operand1.getArgument() + operand2.getArgument());
 		return prodotto;
 	}
 
 	/**
-	 *
+	 * divide il valore del primo oggetto ottenuto come parametro per il secondo
 	 * @param operand1
 	 * @param operand2
-	 * @return nuova istanza risutlato contenente il risultato del primo numero complesso ricevuto in input diviso
-	 *         per il secondo
+	 * @return nuova istanza risultato contenente il risultato della divisione
 	 */
 	static public ComplexNumber divide(ComplexNumber operand1,ComplexNumber operand2) {
 		/*
@@ -348,7 +402,7 @@ public class ComplexNumber {
 		if(operand2.getModulus()!=0)
 			risultato.setPolar(operand1.getModulus() / operand2.getModulus(),operand1.getArgument() - operand2.getArgument());
 		else
-			throw new IllegalArgumentException("Il modulo deve essere diverso da 0");
+			throw new IllegalArgumentException("Il modulo del divisore deve essere diverso da 0");
 		
 		return risultato;
 	}
@@ -371,5 +425,28 @@ public class ComplexNumber {
 			coniugato = operand;
 		return coniugato;
 	}
+	
+	/**
+	 * restituisce vero se l'oggetto invocante della classe ComplexNumber e
+	 * quello passato come argomento,della medesima classe,sono uguali
+	 */
+	@Override
+	public boolean equals(Object obj){
+		
+		//specializzazione del metodo di base equals(Object obj), ora quando si invocherà equals() in un oggetto ComplexNumber il corpo del metodo sarà il seguente
+		
+		boolean equal=false;
+		if(obj instanceof ComplexNumber){//verifica se obj è un istanza di ComplexNumber
+	
+			ComplexNumber nuovaIstanza=(ComplexNumber)obj; //ora che so che è un'istanza di ComplexNumber eseguo il casting, 
+														   //copiando l'istanza in un'altra per non modificare obj.
+			
+			if((this.re==nuovaIstanza.getRe())&&(this.im==nuovaIstanza.getIm())) equal=true;
+		}
+		
+		return equal;
+	}
+		
+
 }
 
