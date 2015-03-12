@@ -52,7 +52,7 @@ public class ComplexNumber {
 		//chiedere perchè non uso solo le variabili
 	}
 	
-
+/*
 	/**
 	 * UTILIZZA I METODI getRe e getIm
 
@@ -65,7 +65,7 @@ public class ComplexNumber {
 		String r = this.getRe() + "+(" + this.getIm() + ")i";
 		return r;
 	}
-*/
+/*
 	/**
 	 * UTILIZZA I METODI getModulus e getArgument
 	 * 
@@ -167,17 +167,8 @@ public class ComplexNumber {
 	 *
 	 *            Metodo utilizzato per memorizzare le coordinate POLARI,
 	 *            (permette di accedere in scrittura ai campi re ed im nel caso
-	 *            in cui si vogliano memorizzare coordinate POLARI.) NB: TUTTI I
-	 *            DATI INSERITI VENGONO MEMORIZZATI COME PARTE REALE ED
-	 *            IMMAGINARIA, PER POI ESSERE RICONVERTITI IN COORDINATE POLARI
-	 *            CON I METODI getModulus E getArgument. Nei casi particolari di
-	 *            Argument= 90,270 la parte IMMAGINARIA viene settata a 0 poichè
-	 *            i metodi Math.cos e Math.sin restituiscono valori
-	 *            "particolari" per gli angoli citati. Nei casi particolari di
-	 *            Argument= 180,360 la parte REALE viene settata a 0 poichè i
-	 *            metodi Math.cos e Math.sin restituiscono valori "particolari"
-	 *            per gli angoli citati. Il metodo non accetta moduli negativi o
-	 *            uguali a 0
+	 *            in cui si ricevono in input coordinate polari)
+	 *            Il metodo non accetta moduli negativi.
 	 *
 	 */
 	public void setPolar(double modulus, double argument) {
@@ -201,6 +192,10 @@ public class ComplexNumber {
 	 * @return istanza somma.
 	 */
 	public ComplexNumber add(ComplexNumber operand) {
+		/*
+		 * svolge le operazioni
+		 * con coordinate rettangolari
+		 */
 		ComplexNumber somma = new ComplexNumber();
 		double re = this.re + operand.getRe();
 		double im = this.im + operand.getIm();
@@ -216,6 +211,10 @@ public class ComplexNumber {
 	 * @return istanza differenza
 	 */
 	public ComplexNumber sub(ComplexNumber operand) {
+		/*
+		 * svolge le operazioni
+		 * con coordinate rettangolari
+		 */
 		ComplexNumber differenza = new ComplexNumber();
 		double re = this.re - operand.getRe();
 		double im = this.im - operand.getIm();
@@ -226,11 +225,13 @@ public class ComplexNumber {
 	/**
 	 *
 	 * @param operand
-	 *            di tipo ComplexNumber (moltiplicatore) svolge le operazioni
-	 *            con coordinate polari
-	 * @return istanza prodotto
+	 * @return nuova istanza contenente il prodotto
 	 */
 	public ComplexNumber multiply(ComplexNumber operand) {
+		/*
+		 * svolge le operazioni
+		 * in coordinate polari
+		 */
 		ComplexNumber prodotto = new ComplexNumber();
 		double modulo = this.getModulus() * operand.getModulus();
 		double argomento = this.getArgument() + operand.getArgument();
@@ -241,15 +242,14 @@ public class ComplexNumber {
 	/**
 	 *
 	 * @param operand
-	 *            di tipo ComplexNumber (divisore) svolge le operazione con
-	 *            coordinate polari Non è necessario un controllo
-	 *            nell'operazione this.getModulus() / operand.getModulus();
-	 *            poichè il modulo non può essere 0 (eccezione gestita in
-	 *            SetPolar)
-	 * @return istanza quotoQuoziente
+	 * @return nuova istanza contenente il risultato della divisione
 	 */
 	public ComplexNumber divide(ComplexNumber operand) {
 		
+		/*
+		 * svolge le operazioni
+		 * con coordinate polari
+		 */
 		ComplexNumber risultato = new ComplexNumber();
 		if (operand.getModulus() != 0) {
 			double modulo = this.getModulus() / operand.getModulus();
@@ -264,9 +264,13 @@ public class ComplexNumber {
 	 * Non riceve in input alcun parametro restituisce il coniugato del
 	 * numeroComplesso invocante
 	 * 
-	 * @return istanza coniugato
+	 * @return nuova istanza contenente il coniugato
 	 */
 	public ComplexNumber getConjugate() {
+		/*
+		 * svolge l'operazione
+		 * con coordinate rettangolari
+		 */
 		
 		ComplexNumber coniugato = new ComplexNumber();
 		if (this.im != 0) {
@@ -280,9 +284,13 @@ public class ComplexNumber {
 	 *
 	 * @param operand1
 	 * @param operand2
-	 * @return la somma dei due numeri complessi ricevuti in input
+	 * @return nuova istanza somma contenente la somma dei due numeri complessi ricevuti in input
 	 */
 	static public ComplexNumber add(ComplexNumber operand1,ComplexNumber operand2) {
+		/*
+		 * svolge le operazioni
+		 * con coordinate rettangolari
+		 */
 		ComplexNumber somma = new ComplexNumber();
 		somma.setRectangular(operand1.getRe() + operand2.getRe(),
 				operand1.getIm() + operand1.getIm());
@@ -293,23 +301,31 @@ public class ComplexNumber {
 	 *
 	 * @param operand1
 	 * @param operand2
-	 * @return la differenza fra il primo numero complesso e il secondo ricevuti
-	 *         in input
+	 * @return nuova istanza differenza contenente la differenza fra il primo numero complesso e il secondo ricevuti
+	 * in input
 	 */
 	static public ComplexNumber sub(ComplexNumber operand1,ComplexNumber operand2) {
-		ComplexNumber somma = new ComplexNumber();
-		somma.setRectangular(operand1.getRe() - operand2.getRe(),
+		/*
+		 * svolge le operazioni
+		 * con coordinate rettangolari
+		 */
+		ComplexNumber differenza = new ComplexNumber();
+		differenza.setRectangular(operand1.getRe() - operand2.getRe(),
 				operand1.getIm() - operand1.getIm());
-		return somma;
+		return differenza;
 	}
 
 	/**
 	 *
 	 * @param operand1
 	 * @param operand2
-	 * @return il prodotto dei 2 numeri complessi in input
+	 * @return nuova istanza prodotto contenente il prodotto dei 2 numeri complessi in input
 	 */
 	static public ComplexNumber multiply(ComplexNumber operand1,ComplexNumber operand2) {
+		/*
+		 * svolge le operazioni
+		 * con coordinate polari
+		 */
 		ComplexNumber prodotto = new ComplexNumber();
 		prodotto.setPolar(operand1.getModulus() * operand2.getModulus(),
 				operand1.getArgument() + operand2.getArgument());
@@ -320,11 +336,14 @@ public class ComplexNumber {
 	 *
 	 * @param operand1
 	 * @param operand2
-	 * @return il risultato del primo numero complesso ricevuto in input diviso
+	 * @return nuova istanza risutlato contenente il risultato del primo numero complesso ricevuto in input diviso
 	 *         per il secondo
 	 */
 	static public ComplexNumber divide(ComplexNumber operand1,ComplexNumber operand2) {
-		
+		/*
+		 * svolge le operazioni
+		 * con coordinate polari
+		 */
 		ComplexNumber risultato = new ComplexNumber();
 		if(operand2.getModulus()!=0)
 			risultato.setPolar(operand1.getModulus() / operand2.getModulus(),operand1.getArgument() - operand2.getArgument());
@@ -337,9 +356,13 @@ public class ComplexNumber {
 	/**
 	 *
 	 * @param operand
-	 * @return Il coniugato del numero complesso ricevuto in input
+	 * @return nuova istanza contenente il coniugato del numero complesso ricevuto in input
 	 */
 	static public ComplexNumber getConjugate(ComplexNumber operand) {
+		/*
+		 * svolge l'operazione
+		 * con coordinate rettangolari
+		 */
 		
 		ComplexNumber coniugato = new ComplexNumber();
 		if (operand.getIm() != 0) {

@@ -6,13 +6,13 @@ import complexnumber.*;
 public class Ese102 {
 
 	public static void main(String[] args) {
-			ComplexNumber.setInitRectangular(0, 0);
+			ComplexNumber.setInitRectangular(1, 0);
 			ComplexNumber c1 = new ComplexNumber();
-			ComplexNumber.setInitRectangular(1, 1);
+			ComplexNumber.setInitRectangular(0, 0);
 			ComplexNumber c2 = new ComplexNumber();
 			ComplexNumber.setInitRectangular(1, 1);
 			ComplexNumber c3 = new ComplexNumber();
-			ComplexNumber.setInitRectangular(1, 1);
+			ComplexNumber.setInitRectangular(1,0 );
 			ComplexNumber c4 = new ComplexNumber();
 			System.out.println("c1:  " + c1);
 			System.out.println("c2:  " + c2);
